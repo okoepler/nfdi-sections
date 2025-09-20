@@ -3,8 +3,8 @@ import {themes as prismThemes} from 'prism-react-renderer';
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'My Site',
-  tagline: 'Dinosaurs are cool',
+  title: 'NFDI Sections',
+  tagline: 'Learn more about the NFDI sections and how you can contribute',
   favicon: 'img/favicon.ico',
 
   future: {
@@ -63,9 +63,9 @@ const config = {
     ({
       image: 'img/docusaurus-social-card.jpg',
       navbar: {
-        title: 'My Site',
+        title: 'NFDI Sections :: Knowledge Base',
         logo: {
-          alt: 'My Site Logo',
+          alt: 'NFDI Sections Logo',
           src: 'img/logo.svg',
         },
         items: [
