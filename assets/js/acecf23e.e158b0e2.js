@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunknfdi_sections=self.webpackChunknfdi_sections||[]).push([[1903],{1912:s=>{s.exports=JSON.parse('{"blogBasePath":"/nfdi-sections/blog","blogTitle":"Blog","authorsListPath":"/nfdi-sections/blog/authors"}')}}]);
