@@ -107,3 +107,39 @@
   box-shadow: var(--ifm-global-shadow-lw);
   border-radius: 6px;
 }
+
+/* Calendar modal */
+.calendarModalOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+.calendarModal {
+  background: var(--ifm-background-surface-color);
+  color: var(--ifm-font-color-base);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: 8px;
+  box-shadow: var(--ifm-global-shadow-lw);
+  max-width: 640px;
+  width: 100%;
+}
+.calendarModalHeader,
+.calendarModalFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--ifm-color-emphasis-300);
+}
+.calendarModalFooter {
+  border-top: 1px solid var(--ifm-color-emphasis-300);
+  border-bottom: none;
+}
+.calendarModalBody {
+  padding: 0.75rem 1rem;
+}

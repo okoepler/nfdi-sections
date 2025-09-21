@@ -47,31 +47,58 @@ function useCalendarData() {
   return {events, loading, error};
 }
 
-function Legend({events}) {
+function Legend({events, enabledTypes, onToggleType, onShowAll}) {
   const items = useMemo(() => {
-    const map = new Map();
+    const byType = new Map();
     for (const ev of events) {
-      const key = (ev.type || ev.title || 'Event') + '|' + (ev.color || 'var(--ifm-color-primary)');
-      if (!map.has(key)) map.set(key, {label: ev.type || 'Event', color: ev.color || 'var(--ifm-color-primary)'});
+      const label = ev.type || 'Event';
+      if (!byType.has(label)) byType.set(label, {label, color: ev.color || 'var(--ifm-color-primary)'});
     }
-    return Array.from(map.values());
+    return Array.from(byType.values());
   }, [events]);
 
   if (!items.length) return null;
   return (
-    <div style={{display:'flex', flexWrap:'wrap', gap:'0.5rem', marginBottom:'0.75rem'}}>
-      {items.map((it, i) => (
-        <span key={i} style={{display:'inline-flex', alignItems:'center', gap:'0.4rem', fontSize:'0.9rem'}}>
-          <span style={{width:12, height:12, background:it.color, border:'1px solid var(--ifm-color-emphasis-300)'}} />
-          <span>{it.label}</span>
-        </span>
-      ))}
+    <div style={{display:'flex', flexWrap:'wrap', gap:'0.5rem', marginBottom:'0.75rem', alignItems:'center'}}>
+      <strong style={{marginRight:'0.25rem'}}>Filter:</strong>
+      {items.map((it) => {
+        const active = enabledTypes.has(it.label);
+        return (
+          <button
+            key={it.label}
+            type="button"
+            onClick={() => onToggleType(it.label)}
+            title={active ? 'Click to hide this type' : 'Click to show this type'}
+            style={{
+              display:'inline-flex', alignItems:'center', gap:'0.4rem',
+              fontSize:'0.9rem', padding:'0.25rem 0.5rem', cursor:'pointer',
+              borderRadius: '4px', border: '1px solid var(--ifm-color-emphasis-300)',
+              background: active ? 'var(--ifm-background-surface-color)' : 'var(--ifm-background-color)',
+              opacity: active ? 1 : 0.5,
+            }}
+          >
+            <span style={{width:12, height:12, background:it.color, border:'1px solid var(--ifm-color-emphasis-300)'}} />
+            <span>{it.label}</span>
+          </button>
+        );
+      })}
+      <button type="button" onClick={onShowAll} style={{marginLeft:'0.25rem'}} className="button button--sm button--secondary">
+        Show all
+      </button>
     </div>
   );
 }
 
 export default function Calendar() {
   const {events, loading, error} = useCalendarData();
+  const [enabledTypes, setEnabledTypes] = useState(new Set());
+  const [selectedEvent, setSelectedEvent] = useState(null);
+
+  // Initialize enabled types when events change
+  useEffect(() => {
+    const types = new Set((events || []).map(ev => ev.type || 'Event'));
+    setEnabledTypes(types);
+  }, [events]);
 
   const eventPropGetter = useCallback((event) => {
     const style = {
@@ -85,8 +112,32 @@ export default function Calendar() {
   }, []);
 
   const onSelectEvent = useCallback((event) => {
-    if (event.url) window.open(event.url, '_blank', 'noopener');
+    setSelectedEvent(event);
   }, []);
+
+  const filtered = useMemo(() => {
+    return events.filter(ev => enabledTypes.has(ev.type || 'Event'));
+  }, [events, enabledTypes]);
+
+  const tooltipAccessor = useCallback((event) => {
+    const parts = [];
+    if (event.description) parts.push(event.description);
+    if (event.location) parts.push(event.location);
+    return parts.join(' • ');
+  }, []);
+
+  const handleToggleType = useCallback((label) => {
+    setEnabledTypes(prev => {
+      const next = new Set(prev);
+      if (next.has(label)) next.delete(label); else next.add(label);
+      return next;
+    });
+  }, []);
+
+  const handleShowAll = useCallback(() => {
+    const types = new Set((events || []).map(ev => ev.type || 'Event'));
+    setEnabledTypes(types);
+  }, [events]);
 
   if (error) {
     return <div className="alert alert--danger">{String(error)}</div>;
@@ -95,11 +146,11 @@ export default function Calendar() {
   return (
     <div>
       {loading && <div className="alert alert--info">Loading calendar…</div>}
-      <Legend events={events} />
+      <Legend events={events} enabledTypes={enabledTypes} onToggleType={handleToggleType} onShowAll={handleShowAll} />
       <div className="calendarWrapper">
         <RBCalendar
           localizer={localizer}
-          events={events}
+          events={filtered}
           startAccessor="start"
           endAccessor="end"
           views={[Views.MONTH, Views.WEEK, Views.DAY, Views.AGENDA]}
@@ -108,11 +159,57 @@ export default function Calendar() {
           popup
           eventPropGetter={eventPropGetter}
           onSelectEvent={onSelectEvent}
+          tooltipAccessor={tooltipAccessor}
         />
       </div>
+      {selectedEvent && (
+        <EventModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />)
+      }
       <p style={{marginTop:'0.5rem', fontSize:'0.9rem'}}>
         Times are displayed in your browser timezone.
       </p>
+    </div>
+  );
+}
+
+function EventModal({event, onClose}) {
+  useEffect(() => {
+    function onKey(e){ if (e.key === 'Escape') onClose(); }
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [onClose]);
+
+  const meta = useMemo(() => {
+    const startStr = format(event.start, 'PPpp');
+    const endStr = format(event.end, 'PPpp');
+    return {startStr, endStr};
+  }, [event.start, event.end]);
+
+  return (
+    <div className="calendarModalOverlay" onClick={onClose} role="dialog" aria-modal="true">
+      <div className="calendarModal" onClick={e => e.stopPropagation()}>
+        <div className="calendarModalHeader">
+          <h3 style={{margin:0}}>{event.title}</h3>
+          <button className="button button--sm button--secondary" onClick={onClose} aria-label="Close">✕</button>
+        </div>
+        <div className="calendarModalBody">
+          <p><strong>When:</strong> {meta.startStr} – {meta.endStr}</p>
+          {event.location && <p><strong>Where:</strong> {event.location}</p>}
+          {event.type && <p><strong>Type:</strong> {event.type}</p>}
+          {event.description && (
+            <div>
+              <strong>Description:</strong>
+              <p style={{marginTop:'0.25rem'}}>{event.description}</p>
+            </div>
+          )}
+        </div>
+        <div className="calendarModalFooter">
+          {event.url && (
+            <a className="button button--primary" href={event.url} target="_blank" rel="noopener noreferrer">Open link</a>
+          )}
+          <button className="button button--secondary" onClick={onClose}>Close</button>
+        </div>
+      </div>
     </div>
   );
 }

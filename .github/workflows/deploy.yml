@@ -12,9 +12,9 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
-      # Install all dependencies declared in package.json (react-big-calendar, date-fns, etc.)
+      # Install dependencies from lockfile for reproducible builds
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci
       - run: npm run build
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
