@@ -1,12 +1,11 @@
-# Website
+# NFDI Sections Knowledge Base
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+This repo contains the code and - most importantly - content of the NFDI Sections Knowledge Base https://okoepler.github.io/nfdi-sections/ 
+This website is built using [Docusaurus](https://docusaurus.io/).
 
-## Installation
+## Contributing to the content
 
-```bash
-yarn
-```
+
 
 ## Local Development
 
