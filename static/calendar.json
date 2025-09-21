@@ -19,5 +19,15 @@
     "type": "WG Terminology Services",
     "color": "#873593",
     "description": "WG TS monthly call"
+  },
+   {
+    "title": "TF Metadata Monthly Meeting",
+    "start": "2025-10-16T14:00:00+02:00",
+    "end": "2025-10-16T15:00:00+02:00",
+    "location": "Online",
+    "url": "",
+    "type": "TF Metadata",
+    "color": "#0BBBEF",
+    "description": "TF Metadata monthly call"
   }
 ]
