@@ -94,6 +94,7 @@ const config = {
             label: 'NFDI Sections',
             position: 'left',
           },
+          { type: 'doc', docId: 'calendar', label: 'Calendar', position: 'left' },
           {
             type: 'doc',
             docId: 'meta/intro',
