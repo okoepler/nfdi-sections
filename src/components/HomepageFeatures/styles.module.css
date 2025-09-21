@@ -5,7 +5,30 @@
   width: 100%;
 }
 
-.featureSvg {
-  height: 200px;
-  width: 200px;
+/* Card grid */
+.cardCol {
+  margin-bottom: 2rem;
+}
+
+.card {
+  padding: 1rem;
+}
+
+.cardImg {
+  display: inline-block;
+  max-width: 160px;
+  max-height: 160px;
+}
+
+.cardTitle {
+  margin-top: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.cardText {
+  margin-bottom: 0.5rem;
+}
+
+.cardLink {
+  font-weight: 600;
 }

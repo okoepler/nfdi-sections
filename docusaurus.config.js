@@ -1,21 +1,37 @@
 // @ts-check
 import {themes as prismThemes} from 'prism-react-renderer';
+import footer from './footer.config.js';
+import fs from 'fs';
+import path from 'path';
+
+const announcementBarActive = true; // set to true to activate the announcement bar
+let announcementBar = {};
+if (announcementBarActive) {
+  try {
+    const abPath = path.resolve(process.cwd(), 'announcementBar.json');
+    const raw = fs.readFileSync(abPath, 'utf-8').trim();
+    announcementBar = raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    console.warn('announcementBar.json invalid or unreadable; skipping announcement bar:', e.message);
+    announcementBar = {};
+  }
+}
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'NFDI Sections',
   tagline: 'Learn more about the NFDI sections and how you can contribute',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/nfdi_favicon.png',
 
   future: {
     v4: true,
   },
 
   // --- GitHub Pages settings ---
-  // Your GitHub Pages root domain:
-  url: 'https://okoepler.github.io',
-  // Path under which the site is served:  /<repo>/
-  baseUrl: '/nfdi-sections/',
+  // Your GitHub Pages root domain (override locally with SITE_URL)
+  url: process.env.SITE_URL || 'https://okoepler.github.io',
+  // Path under which the site is served (override locally with BASE_URL)
+  baseUrl: process.env.BASE_URL || '/nfdi-sections/',
 
   // GitHub pages deployment config
   organizationName: 'okoepler',   // GitHub username or org
@@ -61,21 +77,30 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
-      image: 'img/docusaurus-social-card.jpg',
+      colorMode: {
+        defaultMode: 'light',
+        disableSwitch: true,
+        respectPrefersColorScheme: false,
+      },
       navbar: {
-        title: 'NFDI Sections :: Knowledge Base',
         logo: {
-          alt: 'NFDI Sections Logo',
-          src: 'img/logo.svg',
+          alt: 'NFDI Logo',
+          src: 'img/nfdi_logo.png',
+          href: '/',
         },
         items: [
           {
-            type: 'docSidebar',
-            sidebarId: 'tutorialSidebar',
+            to: '/docs/nfdi-sections/intro',   // ← the “NFDI Sections” text link
+            label: 'NFDI Sections',
             position: 'left',
-            label: 'Tutorial',
           },
-          {to: '/blog', label: 'Blog', position: 'left'},
+          {
+            type: 'doc',
+            docId: 'meta/intro',
+            position: 'left',
+            label: 'Meta',
+          },
+          {to: '/blog', label: 'News', position: 'left'},
           {
             href: 'https://github.com/okoepler/nfdi-sections',
             label: 'GitHub',
@@ -83,35 +108,14 @@ const config = {
           },
         ],
       },
-      footer: {
-        style: 'dark',
-        links: [
-          {
-            title: 'Docs',
-            items: [{ label: 'Tutorial', to: '/docs/intro' }],
-          },
-          {
-            title: 'Community',
-            items: [
-              { label: 'Stack Overflow', href: 'https://stackoverflow.com/questions/tagged/docusaurus' },
-              { label: 'Discord', href: 'https://discordapp.com/invite/docusaurus' },
-              { label: 'X', href: 'https://x.com/docusaurus' },
-            ],
-          },
-          {
-            title: 'More',
-            items: [
-              { label: 'Blog', to: '/blog' },
-              { label: 'GitHub', href: 'https://github.com/okoepler/nfdi-sections' },
-            ],
-          },
-        ],
-        copyright: `Copyright © ${new Date().getFullYear()} My Project, Inc. Built with Docusaurus.`,
-      },
+      // Add announcement bar + footer + prism theme
+      ...(Object.keys(announcementBar).length > 0 && { announcementBar }),
+      footer,
       prism: {
         theme: prismThemes.github,
         darkTheme: prismThemes.dracula,
       },
+     
     }),
 };
 
