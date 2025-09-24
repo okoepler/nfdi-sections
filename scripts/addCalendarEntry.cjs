@@ -33,6 +33,17 @@ function parseIssueBody(body) {
   return fields;
 }
 
+function getField(fields, ...keys) {
+  for (const k of keys) {
+    const key = k.toLowerCase();
+    if (fields[key]) return fields[key];
+    // try to strip anything in parentheses
+    const stripped = key.replace(/\s*\(.*?\)\s*/g, '').trim();
+    if (fields[stripped]) return fields[stripped];
+  }
+  return undefined;
+}
+
 function truthy(v) {
   if (!v) return false;
   const s = String(v).trim().toLowerCase();
@@ -47,9 +58,9 @@ function main() {
   }
   const f = parseIssueBody(body);
 
-  const title = f['title']?.trim();
-  const start = f['start']?.trim();
-  const end = f['end']?.trim();
+  const title = getField(f, 'title')?.trim();
+  const start = getField(f, 'start', 'start (iso8601)')?.trim();
+  const end = getField(f, 'end', 'end (iso8601)')?.trim();
   if (!title || !start || !end) {
     console.error('Missing required fields: title/start/end');
     process.exit(1);
@@ -58,12 +69,12 @@ function main() {
     title,
     start,
     end,
-    allDay: truthy(f['all day event?']) || false,
-    location: f['location']?.trim() || undefined,
-    url: f['link (optional)']?.trim() || undefined,
-    type: f['type']?.trim() || 'Event',
-    color: f['color (hex, optional)']?.trim() || undefined,
-    description: f['description']?.trim() || undefined,
+    allDay: truthy(getField(f, 'all day event?')) || false,
+    location: getField(f, 'location')?.trim() || undefined,
+    url: getField(f, 'link (optional)', 'url')?.trim() || undefined,
+    type: getField(f, 'type')?.trim() || 'Event',
+    color: getField(f, 'color (hex, optional)', 'color')?.trim() || undefined,
+    description: getField(f, 'description')?.trim() || undefined,
     createdBy: process.env.ISSUE_USER || undefined,
   };
 
@@ -87,4 +98,3 @@ function main() {
 }
 
 main();
-
