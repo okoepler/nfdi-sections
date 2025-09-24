@@ -1,0 +1,43 @@
+name: Calendar Issue to PR
+
+on:
+  issues:
+    types: [opened, edited, reopened, labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  create-pr:
+    if: contains(toJson(github.event.issue.labels), 'calendar')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Append calendar entry
+        env:
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_USER: ${{ github.event.issue.user.login }}
+        run: |
+          node scripts/addCalendarEntry.cjs
+
+      - name: Validate calendar.json
+        run: jq empty static/calendar.json
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "chore(calendar): add event from #${{ github.event.issue.number }}"
+          title: "Add calendar event: #${{ github.event.issue.number }}"
+          body: |
+            This PR was created automatically from issue #${{ github.event.issue.number }}.
+            Please review the event details in `static/calendar.json`.
+          branch: chore/add-calendar-${{ github.event.issue.number }}
+          labels: calendar

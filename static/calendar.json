@@ -1,24 +1,14 @@
 [
   {
     "title": "WG Search & Harvesting",
-    "start": "2025-10-01T09:00:00+02:00",
-    "end": "2025-10-01T10:00:00+02:00",
+    "start": "2025-09-29T12:00:00+02:00",
+    "end": "2025-09-29T13:00:00+02:00",
     "allDay": false,
     "location": "Online",
-    "url": "https://meet.example.org/search-harvest",
+    "url": "",
     "type": "WG Search & Harvesting",
     "color": "#00617c",
-    "description": "Regular WG meeting"
-  },
-  {
-    "title": "Terminology Services",
-    "start": "2025-10-03T14:00:00+02:00",
-    "end": "2025-10-03T15:00:00+02:00",
-    "location": "Online",
-    "url": "https://meet.example.org/ts",
-    "type": "WG Terminology Services",
-    "color": "#873593",
-    "description": "WG TS monthly call"
+    "description": "Regular WG meeting. There will be a talk by Ulrik Servbo on NFDI4Immuno. And we will also talk about the TF Metadata and the Use Case Matrix."
   },
    {
     "title": "TF Metadata Monthly Meeting",

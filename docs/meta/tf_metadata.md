@@ -18,3 +18,7 @@ Lorum ipsum.
 
 - TF concept on Zenodo: https://doi.org/10.5281/zenodo.TBD
 - Further links will be added later.
+
+
+## Publications and Outreach
+- Henzen, C., Neidiger, C., Söding, E., & Trippel, T. (2025). Report on the first NFDI Metadata Workshop. Zenodo. [https://doi.org/10.5281/zenodo.17043517](https://doi.org/10.5281/zenodo.17043517)

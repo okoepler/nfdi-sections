@@ -1,0 +1,66 @@
+name: New Calendar Event
+description: Submit a calendar entry to be added to the site
+title: "[Calendar] <Short title>"
+labels:
+  - calendar
+body:
+  - type: input
+    id: title
+    attributes:
+      label: Title
+      description: Event title as it should appear on the calendar
+      placeholder: WG Meeting – Search & Harvesting
+    validations:
+      required: true
+  - type: input
+    id: start
+    attributes:
+      label: Start (ISO8601)
+      description: ISO date/time including timezone, e.g. 2025-10-01T09:00:00+02:00
+      placeholder: 2025-10-01T09:00:00+02:00
+    validations:
+      required: true
+  - type: input
+    id: end
+    attributes:
+      label: End (ISO8601)
+      description: ISO date/time including timezone, e.g. 2025-10-01T10:00:00+02:00
+      placeholder: 2025-10-01T10:00:00+02:00
+    validations:
+      required: true
+  - type: dropdown
+    id: allDay
+    attributes:
+      label: All day event?
+      options: ["false", "true"]
+      default: 0
+  - type: input
+    id: location
+    attributes:
+      label: Location
+      description: e.g. Online, Zoom link, or venue
+      placeholder: Online
+  - type: input
+    id: url
+    attributes:
+      label: Link (optional)
+      description: URL opened when clicking the event (meeting page, registration, etc.)
+      placeholder: https://...
+  - type: input
+    id: type
+    attributes:
+      label: Type
+      description: Category used for filtering (e.g., WG, TF, Event)
+      placeholder: WG
+  - type: input
+    id: color
+    attributes:
+      label: Color (hex, optional)
+      description: Hex color for the event (e.g., #00617c). If omitted, a default is used.
+      placeholder: "#00617c"
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Short description shown in tooltip/modal
+      placeholder: Short description of the meeting
