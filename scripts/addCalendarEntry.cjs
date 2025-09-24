@@ -50,6 +50,46 @@ function truthy(v) {
   return s === 'true' || s === 'yes' || s === '1';
 }
 
+function tzOffsetMinutes(date, timeZone) {
+  const dtf = new Intl.DateTimeFormat('en-US', {
+    timeZone, hour12: false,
+    year: 'numeric', month: '2-digit', day: '2-digit',
+    hour: '2-digit', minute: '2-digit', second: '2-digit',
+  });
+  const parts = dtf.formatToParts(date);
+  const map = Object.fromEntries(parts.map(p => [p.type, p.value]));
+  const asUTC = Date.UTC(+map.year, +map.month - 1, +map.day, +map.hour, +map.minute, +map.second);
+  const utcTs = date.getTime();
+  return (asUTC - utcTs) / 60000; // minutes ahead of UTC
+}
+
+function offsetStringFor(date, timeZone) {
+  const m = tzOffsetMinutes(date, timeZone);
+  const sign = m >= 0 ? '+' : '-';
+  const abs = Math.abs(m);
+  const hh = String(Math.floor(abs / 60)).padStart(2, '0');
+  const mm = String(abs % 60).padStart(2, '0');
+  return `${sign}${hh}:${mm}`;
+}
+
+function buildBerlinISO(dateStr, timeStr = '00:00') {
+  const tz = 'Europe/Berlin';
+  const [y, m, d] = (dateStr || '').split('-').map(Number);
+  if (!y || !m || !d) throw new Error('Invalid date, expected YYYY-MM-DD');
+  const [hh, mm] = (timeStr || '00:00').split(':').map((n) => Number(n || 0));
+  const guessUTC = Date.UTC(y, m - 1, d, hh, mm, 0);
+  // First pass
+  const off1 = tzOffsetMinutes(new Date(guessUTC), tz);
+  const utcMillis = guessUTC - off1 * 60000;
+  // Second pass, in case of DST boundaries
+  const off2 = tzOffsetMinutes(new Date(utcMillis), tz);
+  const utcFinal = guessUTC - off2 * 60000;
+  const offsetStr = offsetStringFor(new Date(utcFinal), tz);
+  const hhStr = String(hh).padStart(2, '0');
+  const mmStr = String(mm).padStart(2, '0');
+  return `${dateStr}T${hhStr}:${mmStr}:00${offsetStr}`;
+}
+
 function main() {
   const body = process.env.ISSUE_BODY || '';
   if (!body) {
@@ -59,17 +99,22 @@ function main() {
   const f = parseIssueBody(body);
 
   const title = getField(f, 'title')?.trim();
-  const start = getField(f, 'start', 'start (iso8601)')?.trim();
-  const end = getField(f, 'end', 'end (iso8601)')?.trim();
-  if (!title || !start || !end) {
-    console.error('Missing required fields: title/start/end');
+  const date = getField(f, 'date', 'date (yyyy-mm-dd)')?.trim();
+  const startTime = getField(f, 'start time (hh:mm)', 'start time')?.trim();
+  const endTime = getField(f, 'end time (hh:mm)', 'end time')?.trim();
+  if (!title || !date) {
+    console.error('Missing required fields: title/date');
     process.exit(1);
   }
+  const allDay = truthy(getField(f, 'all day event?')) || false;
+  const startISO = buildBerlinISO(date, startTime || (allDay ? '00:00' : '00:00'));
+  const endISO = buildBerlinISO(date, endTime || (allDay ? '23:59' : startTime || '00:00'));
+
   const event = {
     title,
-    start,
-    end,
-    allDay: truthy(getField(f, 'all day event?')) || false,
+    start: startISO,
+    end: endISO,
+    allDay,
     location: getField(f, 'location')?.trim() || undefined,
     url: getField(f, 'link (optional)', 'url')?.trim() || undefined,
     type: getField(f, 'type')?.trim() || 'Event',
@@ -78,9 +123,9 @@ function main() {
     createdBy: process.env.ISSUE_USER || undefined,
   };
 
-  // Basic validation of ISO dates
+  // Basic validation
   if (isNaN(Date.parse(event.start)) || isNaN(Date.parse(event.end))) {
-    console.error('Invalid date format. Expect ISO8601 for start/end.');
+    console.error('Invalid composed datetime. Check date/time values.');
     process.exit(1);
   }
 

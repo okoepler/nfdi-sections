@@ -10,7 +10,8 @@ permissions:
 
 jobs:
   create-pr:
-    if: contains(toJson(github.event.issue.labels), 'calendar')
+    # Run if the issue has the 'calendar' label OR the title starts with our template prefix
+    if: contains(toJson(github.event.issue.labels), 'calendar') || startsWith(github.event.issue.title, '[Calendar]')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,6 +21,30 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
+
+      - name: Ensure 'calendar' label exists and is applied
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const name = 'calendar';
+            // Ensure label exists
+            try {
+              await github.rest.issues.getLabel({owner, repo, name});
+            } catch (e) {
+              if (e.status === 404) {
+                await github.rest.issues.createLabel({owner, repo, name, color: '0E8A16'});
+              } else {
+                core.warning(`Could not get/create label: ${e.message}`);
+              }
+            }
+            // Apply label to the issue (ignore if already labeled)
+            try {
+              await github.rest.issues.addLabels({owner, repo, issue_number: context.issue.number, labels: [name]});
+            } catch (e) {
+              core.info(`Label may already be present: ${e.message}`);
+            }
 
       - name: Append calendar entry
         env:

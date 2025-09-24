@@ -180,9 +180,12 @@ function EventModal({event, onClose}) {
   }, [onClose]);
 
   const meta = useMemo(() => {
-    const startStr = format(event.start, 'PPpp');
-    const endStr = format(event.end, 'PPpp');
-    return {startStr, endStr};
+    const fmt = new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin', dateStyle: 'medium', timeStyle: 'short' });
+    const startStr = fmt.format(event.start);
+    const endStr = fmt.format(event.end);
+    const tzNameFmt = new Intl.DateTimeFormat('de-DE', { timeZone: 'Europe/Berlin', timeZoneName: 'short' });
+    const tzName = tzNameFmt.format(event.start).split(' ').pop();
+    return {startStr, endStr, tzName};
   }, [event.start, event.end]);
 
   return (
@@ -193,7 +196,7 @@ function EventModal({event, onClose}) {
           <button className="button button--sm button--secondary" onClick={onClose} aria-label="Close">✕</button>
         </div>
         <div className="calendarModalBody">
-          <p><strong>When:</strong> {meta.startStr} – {meta.endStr}</p>
+          <p><strong>Wann (Berlin):</strong> {meta.startStr} – {meta.endStr} <em>({meta.tzName})</em></p>
           {event.location && <p><strong>Where:</strong> {event.location}</p>}
           {event.type && <p><strong>Type:</strong> {event.type}</p>}
           {event.description && (
