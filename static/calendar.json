@@ -10,7 +10,16 @@
     "color": "#00617c",
     "description": "Regular WG meeting. There will be a talk by Ulrik Servbo on NFDI4Immuno. And we will also talk about the TF Metadata and the Use Case Matrix."
   },
-   {
+  {
+    "title": "NFDI TF-Tools  JourFixe TF-Tools (monthly)",
+    "start": "2025-10-08T15:00:00+02:00",
+    "end": "2025-10-08T15:30:00+02:00",
+    "allDay": false,
+    "type": "NFDI TF-Tools",
+    "description": "Our monthly meeting of the TF-Tools takes place every second Wednesday of the month from 15:00-15:30:",
+    "createdBy": "okoepler"
+  },
+  {
     "title": "TF Metadata Monthly Meeting",
     "start": "2025-10-16T14:00:00+02:00",
     "end": "2025-10-16T15:00:00+02:00",
