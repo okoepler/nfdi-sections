@@ -1,8 +1,8 @@
 {
-  "label": "WG Ontologies",
+  "label": "WG Ontology Harmonization",
   "link": {
     "type": "doc",
-    "id": "meta/wg_onto"
+    "id": "meta/wg_onto/index"
   }
 }
 

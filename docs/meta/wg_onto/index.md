@@ -29,3 +29,9 @@ Lorum ipsum.
 - Philip Strömert (Technische Informationsbibliothek) — philip.stroemert@tib.eu
 - Lozana Rossenova (Technische Informationsbibliothek; NFDI4Culture) — lozana.rossenova@tib.eu
 - Roman Baum (Deutsche Zentralbibliothek für Medizin; NFDI4Health) — baum@zbmed.de
+
+## Used Ontologies
+
+Browse per-consortium ontology usage tables extracted from the consolidated spreadsheet.
+
+- View index: [Used Ontologies](/docs/meta/wg_onto/used-ontologies)
