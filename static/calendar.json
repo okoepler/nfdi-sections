@@ -30,6 +30,16 @@
     "description": "TF Metadata monthly call"
   },
   {
+    "title": "WG research software metadata meeting",
+    "start": "2025-12-09T11:00:00+01:00",
+    "end": "2025-12-09T12:00:00+01:00",
+    "allDay": false,
+    "type": "WG RSM",
+    "color": "#0073AA",
+    "description": "monthly meeting of the WG research software metadata in the NFDI section Metadata, Terminologies, Provenance.",
+    "createdBy": "okoepler"
+  },
+  {
     "title": "TF Metadata Meeting Report Writing",
     "start": "2025-12-11T11:00:00+01:00",
     "end": "2025-12-11T12:00:00+01:00",
